@@ -1,5 +1,5 @@
 var express = require('express');
-var db = require('./db');
+var cors = require('cors');
 
 // Middleware
 var morgan = require('morgan');
@@ -11,6 +11,7 @@ var router = require('./routes.js');
 var app = express();
 module.exports.app = app;
 
+app.use(cors());
 // Set what we are listening on.
 app.set('port', 3000);
 
@@ -29,4 +30,3 @@ if (!module.parent) {
   app.listen(app.get('port'));
   console.log('Listening on', app.get('port'));
 }
-
