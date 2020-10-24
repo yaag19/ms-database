@@ -1,6 +1,9 @@
 var db = require('../db');
 
-const SELECT_ALL_MSG = 'SELECT * FROM messages';
+const NEW_SELECT_MSG =
+  'SELECT u.username, m.text, m.roomname, date_format(m.created_at,"%Y-%c-%e %r") AS date FROM messages AS m INNER JOIN users AS u ON u.id = m.userId;';
+
+//const SELECT_ALL_MSG = 'SELECT * FROM messages';
 const INSERT_MSG = 'INSERT INTO messages SET ?';
 
 const SELECT_ALL_USER = 'SELECT * FROM users';
@@ -13,7 +16,7 @@ module.exports = {
       return new Promise((resolve, reject) => {
         let res = [];
 
-        db.query(SELECT_ALL_MSG, (err, results) => {
+        db.query(NEW_SELECT_MSG, (err, results) => {
           console.log('---- messages.get() ------------------------');
           if (err) {
             console.log(err);
