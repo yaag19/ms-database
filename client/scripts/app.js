@@ -13,10 +13,10 @@ const app = {
   },
   inputUsername: () => {
     let message = 'user의 name을 입력하세요';
-    let name = window.prompt(message, name);
+    let name = window.prompt(message);
     let obj = {};
     obj.username = name;
-    app.handleSubmit(obj);
+    app.handleUsername(obj);
   },
   handleUsername: (userData) => {
     app.sendUsername(userData, () => {
@@ -35,7 +35,7 @@ const app = {
       .then((res) => res.json())
       .then(callback);
   },
-  renderUsername: () => {},
+  renderUsername: () => { },
   fetchAndRender: () => {
     app.fetch((data) => {
       data.forEach(app.renderMessage);
