@@ -6,9 +6,10 @@ const NEW_SELECT_MSG =
 //const SELECT_ALL_MSG = 'SELECT * FROM messages';
 const INSERT_MSG = 'INSERT INTO messages SET ?';
 
-const SELECT_ALL_USER = 'SELECT * FROM users';
-const INSERT_USER = 'INSERT INTO users SET ?';
+const NEW_SELECT_USER = 'SELECT * FROM users WHERE id = ?';
 
+const INSERT_USER = 'INSERT INTO users SET ?';
+let userInfo;
 module.exports = {
   messages: {
     // a function which produces all the messages
@@ -34,34 +35,18 @@ module.exports = {
     },
     // a function which can be used to insert a message into the database
     post: function (postMsg) {
+      let newPostMsg = {
+        text: postMsg.text,
+        roomname: postMsg.roomname,
+        userId: userInfo,
+      };
       return new Promise((resolve, reject) => {
-        let sql = 'SELECT id FROM users WHERE username = ?';
-        let userId;
-        let newPostMSg = {
-          text: postMsg.text,
-          roomname: postMsg.roomname,
-        };
-        db.query(sql, postMsg.username, (err, results) => {
-          console.log('---- messages.post() 1 ------------------------');
-          if (err) {
-            console.log(err);
-            reject(err);
-          }
-          console.log(results[0].id);
-          userId = results[0].id;
-          newPostMSg.userId = userId;
-        });
+        db.query(INSERT_MSG, newPostMsg, (err, results) => {
+          console.log('---- messages.post() ------------------------');
 
-        db.query(INSERT_MSG, newPostMSg, (err, results) => {
-          console.log('---- messages.post() 2 ------------------------');
-          console.log(newPostMSg);
-          if (err) {
-            console.log(err);
-            reject(err);
-          }
+          if (err) reject(err);
           console.log(results);
-
-          resolve(results.insertId);
+          resolve(results);
         });
       });
     },
@@ -71,8 +56,7 @@ module.exports = {
     // Ditto as above.
     get: function () {
       return new Promise((resolve, reject) => {
-        let res = [];
-        db.query(SELECT_ALL_USER, (err, results) => {
+        db.query(NEW_SELECT_USER, [userInfo], (err, results) => {
           console.log('---- users.get() ------------------------');
           if (err) {
             console.log(err);
@@ -80,9 +64,7 @@ module.exports = {
           }
           console.log(results);
 
-          res.push(results);
-          console.log(res);
-          resolve(res);
+          resolve(results);
         });
       });
     },
@@ -94,7 +76,8 @@ module.exports = {
             console.log(err);
             reject(err);
           }
-          console.log(results);
+          // console.log(typeof results.insertId); // number
+          userInfo = results.insertId;
           resolve(results.insertId);
         });
       });

@@ -8,6 +8,7 @@ const app = {
     app.addEventHandlers();
     app.fetch((json) => {
       console.log(json);
+      document.querySelector('#now_room').textContent = 'TOTAL';
       json.forEach(app.renderMessage);
     });
   },
@@ -35,10 +36,23 @@ const app = {
       .then((res) => res.json())
       .then(callback);
   },
-  renderUsername: () => { },
+  renderUsername: () => {
+    window
+      .fetch(app.userServer)
+      .then((resp) => resp.json())
+      .then((data) => {
+        console.log(data);
+        document.querySelector('#userId_input').value = data[0].id;
+        document.querySelector('#username_input').value = data[0].username;
+      });
+  },
   fetchAndRender: () => {
+    const ROOM = document.querySelector('.inputRoomname').value;
+    document.querySelector('#now_room').textContent = ROOM;
     app.fetch((data) => {
-      data.forEach(app.renderMessage);
+      let msgs = data.filter((elem) => elem.roomname === ROOM);
+      console.log(msgs);
+      msgs.forEach(app.renderMessage);
     });
   },
   addEventHandlers: () => {
@@ -73,7 +87,7 @@ const app = {
     document.querySelector('#chats').innerHTML = '';
   },
   clearForm: () => {
-    document.querySelector('.inputUser').value = '';
+    document.querySelector('.inputRoomname').value = '';
     document.querySelector('.inputChat').value = '';
   },
   renderMessage: ({ username, text, date, roomname }) => {
@@ -94,7 +108,7 @@ const app = {
     app.clearMessages();
     app.send(
       {
-        userId: document.querySelector('#userId_input').value,
+        username: document.querySelector('#username_input').value,
         text: document.querySelector('.inputChat').value,
         roomname: document.querySelector('.inputRoomname').value,
       },

@@ -16,8 +16,6 @@ module.exports = {
       console.log(req.body);
       await models.messages.post(req.body);
       await res.status(200).send(req.body);
-
-      //res.status(201).send('Insert message!');
     },
   },
 
